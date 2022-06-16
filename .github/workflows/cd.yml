@@ -12,10 +12,10 @@ jobs:
   deployment:
     runs-on: ubuntu-latest
     if: ${{ (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') ||
-      github.event_name == 'workflow_dispatch' || github.event_name == 'push' }}
+      github.event_name == 'workflow_dispatch' || github.event_name == 'push' || github.event_name == 'release' }}
     env:
-      PROD_DEPLOY: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy_env == 'production') || github.event_name == 'push' }}
       STAGING_DEPLOY: ${{ github.event_name == 'workflow_run' || (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy_env != 'production') }}
+      PROD_DEPLOY: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy_env == 'production') || github.event_name == 'push' || (github.event_name == 'release' && github.event_action == 'published') }}
       STAGING_DEPLOY_ENV: ${{github.event_name == 'workflow_dispatch' && github.event.inputs.deploy_env || 'beta'}}
       DEPLOY_BRANCH: ${{github.event_name == 'workflow_run' && github.event.workflow_run.head_branch || github.ref}}
     steps:
